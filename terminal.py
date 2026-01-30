@@ -68,38 +68,101 @@ def determine_mode(file: Path) -> str:
 
     return "".join(mode_attributes)
 
-def unicode_finder(file):
+def unicode_finder(file: Path) -> str:
     file_icons = {
-        "directory": "\U0001F4C1",
-        "text": "\U0001F4C4",
-        "pdf": "\U0001F4D5",
-        "image": "\U0001F5BC",
-        "video": "\U0001F39E",
-        "audio": "\U0001F3B5",
-        "exe": "\u2699",
-        "zip": "\U0001F5DC",
-        "shortcut": "\U0001F517",
-        "hidden": "\U0001F47B",
-        "trash": "\U0001F5D1",
-        "generic": "\U0001F5CE"
+        "directory": "\U0001F4C1",  # 📁
+        "text": "\U0001F4C4",       # 📄
+        "pdf": "\U0001F4D5",        # 📕
+        "image": "\U0001F5BC",      # 🖼️
+        "video": "\U0001F39E",      # 🎞️
+        "audio": "\U0001F3B5",      # 🎵
+        "exe": "\u2699",             # ⚙️
+        "zip": "\U0001F5DC",        # 🗜️
+        "shortcut": "\U0001F517",   # 🔗
+        "hidden": "\U0001F47B",     # 👻
+        "trash": "\U0001F5D1",      # 🗑️
+        "generic": "\U0001F5CE"     # 🗎
     }
     suffix_icons = {
+        # Images
         ".png": file_icons["image"],
         ".jpg": file_icons["image"],
+        ".jpeg": file_icons["image"],
+        ".gif": file_icons["image"],
+        ".ico": file_icons["image"],
+        ".svg": file_icons["image"],
+
+        # Videos
         ".mp4": file_icons["video"],
         ".mov": file_icons["video"],
+        ".avi": file_icons["video"],
+        ".mkv": file_icons["video"],
+
+        # Audio
+        ".mp3": file_icons["audio"],
+        ".wav": file_icons["audio"],
+        ".ogg": file_icons["audio"],
+        ".flac": file_icons["audio"],
+
+        # Text / Documents
         ".txt": file_icons["text"],
+        ".md": file_icons["text"],
         ".json": file_icons["text"],
         ".csv": file_icons["text"],
+        ".log": "\U0001F4DC",  # 📜 scroll icon
         ".pdf": file_icons["pdf"],
-        ".zip": file_icons["zip"]
+        ".doc": file_icons["text"],
+        ".docx": file_icons["text"],
+
+        # Web / Scripts
+        ".html": "\U0001F310",  # 🌐 globe
+        ".css": "\U0001F310",
+        ".js": "\U0001F310",
+        ".py": "\U0001F40D",  # 🐍 python
+        ".sh": "\U0001F40D",
+        ".bat": "\U0001F40D",
+
+        # Spreadsheets / Presentations
+        ".xls": "\U0001F4CA",  # 📊
+        ".xlsx": "\U0001F4CA",
+        ".ppt": "\U0001F4C8",  # 📈
+        ".pptx": "\U0001F4C8",
+
+        # Fonts
+        ".ttf": "\U0001F524",  # 🔤
+        ".otf": "\U0001F524",
+
+        # Databases / Configs
+        ".db": "\U0001F5C4",  # 🗄️
+        ".sql": "\U0001F5C4",
+        ".sqlite": "\U0001F5C4",
+        ".ini": "\u2699",  # ⚙️
+        ".cfg": "\u2699",
+        ".yaml": "\u2699",
+        ".yml": "\u2699",
+
+        # Archives
+        ".zip": file_icons["zip"],
+        ".rar": file_icons["zip"],
+        ".7z": file_icons["zip"],
+        ".tar": file_icons["zip"],
+        ".gz": file_icons["zip"]
     }
 
+    # Hidden files (start with dot)
+    if file.name.startswith("."):
+        return file_icons["hidden"]
+
+    # Directories
     if file.is_dir():
         return file_icons["directory"]
 
-    elif file.is_file():
+    # Files
+    if file.is_file():
         return suffix_icons.get(file.suffix.lower(), file_icons["generic"])
+
+    # Fallback for anything else
+    return file_icons["generic"]
 
 
 if __name__ == "__main__":
