@@ -1,3 +1,4 @@
+
 from pathlib import Path
 from datetime import datetime
 import stat
@@ -12,7 +13,7 @@ def main() -> None:
                 terminal_command: str = input(f"{current_folder}> ")
                 command_split: list[str] = terminal_command.split(' ')
 
-                if command == "ls":
+                if terminal_command == "ls":
                     command_ls(current_folder)
                 elif command_split[0] in ("cd", "cd.."):
                     # Reuse variable without re-annotating type
@@ -50,23 +51,24 @@ def command_cd(old_folder: Path, cd_check: list[str]) -> Path:
 
 
 def determine_mode(file: Path) -> str:
-    mode: int = file.stat().st_file_attributes
-    attributes: list[str] = ["-"] * 5
+    file_mode: int = file.stat().st_file_attributes
+    mode_attributes: list[str] = ["-"] * 5
 
-    if mode & stat.FILE_ATTRIBUTE_DIRECTORY:
-        attributes[0] = "d"
-    if mode & stat.FILE_ATTRIBUTE_ARCHIVE:
-        attributes[1] = "a"
-    if mode & stat.FILE_ATTRIBUTE_READONLY:
-        attributes[2] = "r"
-    if mode & stat.FILE_ATTRIBUTE_SYSTEM:
-        attributes[3] = "s"
-    if mode & stat.FILE_ATTRIBUTE_HIDDEN:
-        attributes[4] = "h"
+    if file_mode & stat.FILE_ATTRIBUTE_DIRECTORY:
+        mode_attributes[0] = "d"
+    if file_mode & stat.FILE_ATTRIBUTE_ARCHIVE:
+        mode_attributes[1] = "a"
+    if file_mode & stat.FILE_ATTRIBUTE_READONLY:
+        mode_attributes[2] = "r"
+    if file_mode & stat.FILE_ATTRIBUTE_SYSTEM:
+        mode_attributes[3] = "s"
+    if file_mode & stat.FILE_ATTRIBUTE_HIDDEN:
+        mode_attributes[4] = "h"
 
-    return "".join(attributes)
+    return "".join(mode_attributes)
 
 
 if __name__ == "__main__":
-    main()
 
+if __name__ == "__main__":
+    main()
