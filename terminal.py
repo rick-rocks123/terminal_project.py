@@ -9,8 +9,8 @@ def main() -> None:
     try:
         while True:
             try:
-                command: str = input(f"{current_folder}> ")
-                command_split: list[str] = command.split(' ')
+                terminal_command: str = input(f"{current_folder}> ")
+                command_split: list[str] = terminal_command.split(' ')
 
                 if command == "ls":
                     command_ls(current_folder)
