@@ -34,7 +34,8 @@ def command_ls(current_folder: Path) -> None:
         file_stats = file_or_dir.stat()
         date_info: str = datetime.fromtimestamp(file_stats.st_mtime).strftime('%m/%d/%Y, %I:%M%p')
         modes: str = determine_mode(file_or_dir)
-        print(f"{modes:<19} {date_info:<19} {file_stats.st_size:>10}  {file_or_dir.name}")
+        unicode = unicode_finder(file_or_dir)
+        print(f"{modes:<19} {date_info:<19} {file_stats.st_size:>10}  {unicode}{file_or_dir.name}")
 
 
 def command_cd(old_folder: Path, cd_check: list[str]) -> Path:
@@ -67,8 +68,39 @@ def determine_mode(file: Path) -> str:
 
     return "".join(mode_attributes)
 
+def unicode_finder(file):
+    file_icons = {
+        "directory": "\U0001F4C1",
+        "text": "\U0001F4C4",
+        "pdf": "\U0001F4D5",
+        "image": "\U0001F5BC",
+        "video": "\U0001F39E",
+        "audio": "\U0001F3B5",
+        "exe": "\u2699",
+        "zip": "\U0001F5DC",
+        "shortcut": "\U0001F517",
+        "hidden": "\U0001F47B",
+        "trash": "\U0001F5D1",
+        "generic": "\U0001F5CE"
+    }
+    suffix_icons = {
+        ".png": file_icons["image"],
+        ".jpg": file_icons["image"],
+        ".mp4": file_icons["video"],
+        ".mov": file_icons["video"],
+        ".txt": file_icons["text"],
+        ".json": file_icons["text"],
+        ".csv": file_icons["text"],
+        ".pdf": file_icons["pdf"],
+        ".zip": file_icons["zip"]
+    }
 
-if __name__ == "__main__":
+    if file.is_dir():
+        return file_icons["directory"]
+
+    elif file.is_file():
+        return suffix_icons.get(file.suffix.lower(), file_icons["generic"])
+
 
 if __name__ == "__main__":
     main()
