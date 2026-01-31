@@ -55,25 +55,25 @@ def determine_mode(file: Path) -> str:
     file_mode: int = file.stat().st_file_attributes
     mode_attributes: list[str] = ["-"] * 15
 
-    mode_and_position: dict[int, tuple[int, str]] = {
-        stat.FILE_ATTRIBUTE_DIRECTORY: (0, "d"),  # directory
-        stat.FILE_ATTRIBUTE_ARCHIVE: (1, "a"),  # archive
-        stat.FILE_ATTRIBUTE_READONLY: (2, "r"),  # read-only
-        stat.FILE_ATTRIBUTE_SYSTEM: (3, "t"),  # system file
-        stat.FILE_ATTRIBUTE_HIDDEN: (4, "h"),  # hidden file
-        stat.FILE_ATTRIBUTE_COMPRESSED: (5, "c"),  # compressed file
-        stat.FILE_ATTRIBUTE_OFFLINE: (6, "o"),  # offline file
-        stat.FILE_ATTRIBUTE_TEMPORARY: (7, "e"),  # temporary file
-        stat.FILE_ATTRIBUTE_ENCRYPTED: (8, "n"),  # encrypted file
-        stat.FILE_ATTRIBUTE_NOT_CONTENT_INDEXED: (9, "i"),  # not content indexed
-        stat.FILE_ATTRIBUTE_REPARSE_POINT: (10, "l"),  # reparse point / symlink / junction
-        stat.FILE_ATTRIBUTE_SPARSE_FILE: (11, "u"),  # sparse file
-        stat.FILE_ATTRIBUTE_VIRTUAL: (12, "s"),  # virtual file
-        stat.FILE_ATTRIBUTE_DEVICE: (13, "a"),  # device
-        stat.FILE_ATTRIBUTE_NORMAL: (14, "r"),  # normal file
+    mode_and_position: dict[int, str] = {
+        stat.FILE_ATTRIBUTE_DIRECTORY: "d",  # directory
+        stat.FILE_ATTRIBUTE_ARCHIVE: "a",  # archive
+        stat.FILE_ATTRIBUTE_READONLY: "r",  # read-only
+        stat.FILE_ATTRIBUTE_SYSTEM: "t",  # system file
+        stat.FILE_ATTRIBUTE_HIDDEN: "h",  # hidden file
+        stat.FILE_ATTRIBUTE_COMPRESSED: "c",  # compressed file
+        stat.FILE_ATTRIBUTE_OFFLINE: "o",  # offline file
+        stat.FILE_ATTRIBUTE_TEMPORARY: "e",  # temporary file
+        stat.FILE_ATTRIBUTE_ENCRYPTED: "n",  # encrypted file
+        stat.FILE_ATTRIBUTE_NOT_CONTENT_INDEXED: "i",  # not content indexed
+        stat.FILE_ATTRIBUTE_REPARSE_POINT: "l",  # reparse point / symlink / junction
+        stat.FILE_ATTRIBUTE_SPARSE_FILE: "u",  # sparse file
+        stat.FILE_ATTRIBUTE_VIRTUAL: "s",  # virtual file
+        stat.FILE_ATTRIBUTE_DEVICE: "a",  # device
+        stat.FILE_ATTRIBUTE_NORMAL:"r"  # normal file
     }
 
-    for key, (index, char) in mode_and_position.items():
+    for index, (key, char) in enumerate(mode_and_position.items()):
         if file_mode & key:
             mode_attributes[index] = char
 
