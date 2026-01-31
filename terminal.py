@@ -53,113 +53,105 @@ def command_cd(old_folder: Path, cd_check: list[str]) -> Path:
 
 def determine_mode(file: Path) -> str:
     file_mode: int = file.stat().st_file_attributes
-    mode_attributes: list[str] = ["-"] * 5
+    mode_attributes: list[str] = ["-"] * 15
 
-    if file_mode & stat.FILE_ATTRIBUTE_DIRECTORY:
-        mode_attributes[0] = "d"
-    if file_mode & stat.FILE_ATTRIBUTE_ARCHIVE:
-        mode_attributes[1] = "a"
-    if file_mode & stat.FILE_ATTRIBUTE_READONLY:
-        mode_attributes[2] = "r"
-    if file_mode & stat.FILE_ATTRIBUTE_SYSTEM:
-        mode_attributes[3] = "s"
-    if file_mode & stat.FILE_ATTRIBUTE_HIDDEN:
-        mode_attributes[4] = "h"
+    mode_and_position: dict[int, tuple[int, str]] = {
+        stat.FILE_ATTRIBUTE_DIRECTORY: (0, "d"),  # directory
+        stat.FILE_ATTRIBUTE_ARCHIVE: (1, "a"),  # archive
+        stat.FILE_ATTRIBUTE_READONLY: (2, "r"),  # read-only
+        stat.FILE_ATTRIBUTE_SYSTEM: (3, "t"),  # system file
+        stat.FILE_ATTRIBUTE_HIDDEN: (4, "h"),  # hidden file
+        stat.FILE_ATTRIBUTE_COMPRESSED: (5, "c"),  # compressed file
+        stat.FILE_ATTRIBUTE_OFFLINE: (6, "o"),  # offline file
+        stat.FILE_ATTRIBUTE_TEMPORARY: (7, "e"),  # temporary file
+        stat.FILE_ATTRIBUTE_ENCRYPTED: (8, "n"),  # encrypted file
+        stat.FILE_ATTRIBUTE_NOT_CONTENT_INDEXED: (9, "i"),  # not content indexed
+        stat.FILE_ATTRIBUTE_REPARSE_POINT: (10, "l"),  # reparse point / symlink / junction
+        stat.FILE_ATTRIBUTE_SPARSE_FILE: (11, "u"),  # sparse file
+        stat.FILE_ATTRIBUTE_VIRTUAL: (12, "s"),  # virtual file
+        stat.FILE_ATTRIBUTE_DEVICE: (13, "a"),  # device
+        stat.FILE_ATTRIBUTE_NORMAL: (14, "r"),  # normal file
+    }
+
+    for key, (index, char) in mode_and_position.items():
+        if file_mode & key:
+            mode_attributes[index] = char
 
     return "".join(mode_attributes)
 
 def unicode_finder(file: Path) -> str:
-    file_icons = {
+
+    file_icons: dict[str, str] = {
+        # General / categories
         "directory": "\U0001F4C1",  # 📁
-        "text": "\U0001F4C4",       # 📄
-        "pdf": "\U0001F4D5",        # 📕
-        "image": "\U0001F5BC",      # 🖼️
-        "video": "\U0001F39E",      # 🎞️
-        "audio": "\U0001F3B5",      # 🎵
-        "exe": "\u2699",             # ⚙️
-        "zip": "\U0001F5DC",        # 🗜️
-        "shortcut": "\U0001F517",   # 🔗
-        "hidden": "\U0001F47B",     # 👻
-        "trash": "\U0001F5D1",      # 🗑️
-        "generic": "\U0001F5CE"     # 🗎
-    }
-    suffix_icons = {
-        # Images
-        ".png": file_icons["image"],
-        ".jpg": file_icons["image"],
-        ".jpeg": file_icons["image"],
-        ".gif": file_icons["image"],
-        ".ico": file_icons["image"],
-        ".svg": file_icons["image"],
+        "text": "\U0001F4C4",  # 📄
+        "pdf": "\U0001F4D5",  # 📕
+        "image": "\U0001F5BC",  # 🖼️
+        "video": "\U0001F39E",  # 🎞️
+        "audio": "\U0001F3B5",  # 🎵
+        "exe": "\u2699",  # ⚙️
+        "zip": "\U0001F5DC",  # 🗜️
+        "shortcut": "\U0001F517",  # 🔗
+        "hidden": "\U0001F47B",  # 👻
+        "trash": "\U0001F5D1",  # 🗑️
+        "generic": "\U0001F5CE",  # 🗎
 
-        # Videos
-        ".mp4": file_icons["video"],
-        ".mov": file_icons["video"],
-        ".avi": file_icons["video"],
-        ".mkv": file_icons["video"],
-
-        # Audio
-        ".mp3": file_icons["audio"],
-        ".wav": file_icons["audio"],
-        ".ogg": file_icons["audio"],
-        ".flac": file_icons["audio"],
-
-        # Text / Documents
-        ".txt": file_icons["text"],
-        ".md": file_icons["text"],
-        ".json": file_icons["text"],
-        ".csv": file_icons["text"],
-        ".log": "\U0001F4DC",  # 📜 scroll icon
-        ".pdf": file_icons["pdf"],
-        ".doc": file_icons["text"],
-        ".docx": file_icons["text"],
-
-        # Web / Scripts
-        ".html": "\U0001F310",  # 🌐 globe
+        # Extensions
+        ".txt": "\U0001F4C4",  # text
+        ".md": "\U0001F4C4",
+        ".json": "\U0001F4C4",
+        ".csv": "\U0001F4C4",
+        ".log": "\U0001F4DC",  # 📜 scroll
+        ".pdf": "\U0001F4D5",  # pdf
+        ".doc": "\U0001F4C4",
+        ".docx": "\U0001F4C4",
+        ".png": "\U0001F5BC",  # image
+        ".jpg": "\U0001F5BC",
+        ".jpeg": "\U0001F5BC",
+        ".gif": "\U0001F5BC",
+        ".ico": "\U0001F5BC",
+        ".svg": "\U0001F5BC",
+        ".mp4": "\U0001F39E",  # video
+        ".mov": "\U0001F39E",
+        ".avi": "\U0001F39E",
+        ".mkv": "\U0001F39E",
+        ".mp3": "\U0001F3B5",  # audio
+        ".wav": "\U0001F3B5",
+        ".ogg": "\U0001F3B5",
+        ".flac": "\U0001F3B5",
+        ".html": "\U0001F310",  # 🌐 web
         ".css": "\U0001F310",
         ".js": "\U0001F310",
         ".py": "\U0001F40D",  # 🐍 python
         ".sh": "\U0001F40D",
         ".bat": "\U0001F40D",
-
-        # Spreadsheets / Presentations
-        ".xls": "\U0001F4CA",  # 📊
+        ".xls": "\U0001F4CA",  # 📊 spreadsheets
         ".xlsx": "\U0001F4CA",
-        ".ppt": "\U0001F4C8",  # 📈
+        ".ppt": "\U0001F4C8",  # 📈 presentations
         ".pptx": "\U0001F4C8",
-
-        # Fonts
-        ".ttf": "\U0001F524",  # 🔤
+        ".ttf": "\U0001F524",  # 🔤 fonts
         ".otf": "\U0001F524",
-
-        # Databases / Configs
-        ".db": "\U0001F5C4",  # 🗄️
+        ".db": "\U0001F5C4",  # 🗄️ databases
         ".sql": "\U0001F5C4",
         ".sqlite": "\U0001F5C4",
-        ".ini": "\u2699",  # ⚙️
+        ".ini": "\u2699",  # ⚙️ configs
         ".cfg": "\u2699",
         ".yaml": "\u2699",
         ".yml": "\u2699",
-
-        # Archives
-        ".zip": file_icons["zip"],
-        ".rar": file_icons["zip"],
-        ".7z": file_icons["zip"],
-        ".tar": file_icons["zip"],
-        ".gz": file_icons["zip"]
+        ".zip": "\U0001F5DC",  # 🗜️ archives
+        ".rar": "\U0001F5DC",
+        ".7z": "\U0001F5DC",
+        ".tar": "\U0001F5DC",
+        ".gz": "\U0001F5DC",
     }
 
-    # Hidden files (start with dot)
-    if file.name.startswith("."):
-        return file_icons["hidden"]
 
     # Directories
     if file.is_dir():
         return file_icons["directory"]
-
     # Files
     if file.is_file():
-        return suffix_icons.get(file.suffix.lower(), file_icons["generic"])
+        return file_icons.get(file.suffix.lower(), file_icons["generic"])
 
     # Fallback for anything else
     return file_icons["generic"]
