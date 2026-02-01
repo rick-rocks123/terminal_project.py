@@ -2,10 +2,11 @@
 from pathlib import Path
 from datetime import datetime
 import stat
+import sys
 
 def main() -> None:
-    origin_folder: str = r'C:\Users\liebe\OneDrive\programming'
-    current_folder: Path = Path(origin_folder)
+
+    current_folder: Path = Path.cwd()
 
     try:
         while True:
@@ -22,19 +23,24 @@ def main() -> None:
                 print("index error")
 
     except EOFError:
-        print(current_folder)
+        sys.exit()
+
 
 
 def command_ls(current_folder: Path) -> None:
+
     headings: dict[str, str] = {"Mode": "<19", "LastWriteTime": ">19", "Length": ">12", "Name": ""}
     print(" ".join(f"{heading:{formatting}}" for heading, formatting in headings.items()))
     print(" ".join(f"{'-' * len(heading):{formatting}}" for heading, formatting in headings.items()))
 
-    for file_or_dir in current_folder.iterdir():
+    for file_or_dir in current_folder.iterdir(): # current_directory children
+
         file_stats = file_or_dir.stat()
         date_info: str = datetime.fromtimestamp(file_stats.st_mtime).strftime('%m/%d/%Y, %I:%M%p')
+
         modes: str = determine_mode(file_or_dir)
-        unicode = unicode_finder(file_or_dir)
+        unicode = unicode_finder(file_or_dir) # getting the emojis for the files
+
         print(f"{modes:<19} {date_info:<19} {file_stats.st_size:>10}  {unicode}{file_or_dir.name}")
 
 
@@ -43,6 +49,7 @@ def command_cd(old_folder: Path, cd_check: list[str]) -> Path:
         if cd_file in ("cd..", ".."):
             return old_folder.parent
     else:
+        # making sure its a directory and not a file
         destination: Path = old_folder / cd_check[1]
         if destination.is_dir() and destination.exists():
             return destination
@@ -52,7 +59,7 @@ def command_cd(old_folder: Path, cd_check: list[str]) -> Path:
 
 
 def determine_mode(file: Path) -> str:
-    file_mode: int = file.stat().st_file_attributes
+    file_mode: int = file.stat().st_file_attributes # getting file value ex 32
     mode_attributes: list[str] = ["-"] * 15
 
     mode_and_position: dict[int, str] = {
@@ -149,7 +156,7 @@ def unicode_finder(file: Path) -> str:
     # Directories
     if file.is_dir():
         return file_icons["directory"]
-    # Files
+    # Files with suffix
     if file.is_file():
         return file_icons.get(file.suffix.lower(), file_icons["generic"])
 
